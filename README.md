@@ -7,10 +7,6 @@
 AI Hub 537번 데이터셋(common 카테고리)을 사용해 화자 50명의 음성 4,835개를 분석합니다.
 오디오 세그먼트 길이(0.5초 ~ 전체 발화)를 변수로 삼아 **"얼마나 들어야 누구인지 알 수 있는가"** 를 LightGBM, SVM, CatBoost 세 모델로 검증합니다.
 
-시계열 분석의 **lookback window** 개념을 음성 데이터에 적용한 실험입니다. 주식 분석에서 lookback을 고정하고 미래를 예측하는 것과 달리, 이 프로젝트는 lookback 자체를 변수로 만들어 "얼마나 과거를 봐야 하는가"를 분석합니다.
-
----
-
 ## 파이프라인
 
 ```mermaid
@@ -28,8 +24,6 @@ flowchart TD
     H2 --> I
     H3 --> I
 ```
-
----
 
 ## 실험 결과
 
@@ -63,8 +57,6 @@ flowchart TD
 
 ![전체 모델 비교](result_all_models.png)
 
----
-
 ## 특징 추출 (85차원)
 
 피처 추출을 3단계에 걸쳐 개선했습니다.
@@ -85,8 +77,6 @@ flowchart TD
 
 Delta MFCC는 프레임 간 변화량(시간적 패턴)을 반영해, 순수 tabular 분류가 아닌 **시계열 분석**으로 만드는 핵심 요소입니다.
 
----
-
 ## 전처리
 
 1. **파일 매핑** — WAV(`TS_common_01`)와 JSON(`TL_common_01`)을 같은 파일명 기준으로 쌍으로 연결
@@ -97,14 +87,10 @@ Delta MFCC는 프레임 간 변화량(시간적 패턴)을 반영해, 순수 tab
 
 **주의**: 화자 단위로 Train/Val을 나누면(화자 40명 학습 / 10명 검증) 학습에 없는 화자를 맞혀야 하므로 정확도가 0%가 됩니다. 파일 기준 분리가 올바른 방법입니다.
 
----
-
 ## 평가 지표
 
 - **Accuracy** — 화자를 정확히 맞힌 비율 (랜덤 기준선: 2%)
 - **Cosine Similarity** — 예측 확률 벡터 기반으로 같은 화자끼리는 높게, 다른 화자끼리는 낮게 측정. 음성이 길어질수록 같은 화자 유사도는 올라가고 다른 화자 유사도는 내려가는 패턴 확인
-
----
 
 ## 모델 하이퍼파라미터
 
@@ -112,8 +98,6 @@ Delta MFCC는 프레임 간 변화량(시간적 패턴)을 반영해, 순수 tab
 |------|----------|-----|----------|
 | 핵심 파라미터 | n_estimators=100, lr=0.05, max_depth=4, num_leaves=7, L1=1.0, L2=5.0 | kernel=rbf, C=1.0 | 과적합 방지 특화 |
 | 전처리 | StandardScaler | StandardScaler | StandardScaler |
-
----
 
 ## 데이터셋
 
@@ -127,19 +111,6 @@ New_Sample/
 ├── 라벨링데이터/TL_common_01/   # JSON 메타데이터
 └── 원천데이터/TS_common_01/     # WAV 음성 파일
 ```
-
----
-
-## 실행 방법
-
-```bash
-source venv/bin/activate
-jupyter notebook speaker_recognition.ipynb
-```
-
-> VSCode에서 실행 시 커널을 **`Python (speaker_recognition)`** 으로 변경하세요.
-
----
 
 ## 의존성
 
